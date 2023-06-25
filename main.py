@@ -98,12 +98,18 @@ def run_simulation():
     st.pyplot()
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
-st.write("# This is showcase of CHSH")
+st.write("## This is showcase of CHSH")
+st.write("It basically showcases that realism in physics is wrong. If it was correct than max number possible is 2, but here we are getting approx. 2.8.")
+st.write("Source code: https://github.com/youshitsune/chsh")
 sim, real = st.columns(2)
 with sim:
     if st.button("Run simulation"):
         run_simulation()
+
 with real:
     if st.button("Run on real quantum computer"):
         run_real()
+
+    st.write("Running on real quantum computer can take a while!")
+
 
