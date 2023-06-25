@@ -1,7 +1,6 @@
 import streamlit as st
 import qiskit
-from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, transpile, Aer
-from qiskit.tools.monitor import job_monitor, backend_monitor, backend_overview
+from qiskit import QuantumCircuit, QuantumRegister, transpile, Aer
 from qiskit_ibm_provider import IBMProvider
 import matplotlib.pyplot as plt
 import numpy as np
