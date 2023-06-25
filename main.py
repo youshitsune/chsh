@@ -70,7 +70,7 @@ def run_real():
     backend = provider.get_backend("ibmq_lima")
     transpiled_circuits = transpile(my_chsh_circuits, backend)
     job_real = backend.run(transpiled_circuits, shots=8192)
-    result_real = job_real.results()
+    result_real = job_real.result()
 
     CHSH1, CHSH2 = compute_chsh_witness(result_real.get_counts())
 
