@@ -2,6 +2,7 @@ import streamlit as st
 import qiskit
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, transpile, Aer
 from qiskit.tools.monitor import job_monitor, backend_monitor, backend_overview
+from qiskit_ibm_provider import IBMProvider
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -60,7 +61,27 @@ def compute_chsh_witness(counts):
         CHSH2.append(chsh2/no_shots)
 
     return CHSH1, CHSH2
-def run():
+
+def run_real():
+    number_of_thetas = 15
+    theta_vec = np.linspace(0,2*np.pi,number_of_thetas)
+    my_chsh_circuits = make_chsh_circuit(theta_vec)
+
+    provider = IBMProvider(st.secrets["key"])
+    backend = provider.get_backend("ibmq_lima")
+    transpiled_circuits = transpile(my_chsh_circuits, backend)
+    job_real = backend.run(transpiled_circuits, shots=8192)
+    result_real = job_real.results()
+
+    CHSH1, CHSH2 = compute_chsh_witness(result_real.get_counts())
+
+    plt.figure(figsize=(12, 8))
+    plt.plot(theta_vec, CHSH1, 'o-', label = 'CHSH1 Lima')
+    plt.plot(theta_vec, CHSH2, 'o-', label = 'CHSH2 Lima')
+
+    st.pyplot()
+
+def run_simulation():
     sim = Aer.get_backend("aer_simulator")
     number_of_thetas = 15
     theta_vec = np.linspace(0,2*np.pi,number_of_thetas)
@@ -74,9 +95,15 @@ def run():
     plt.plot(theta_vec, CHSH1,'o-',label = 'CHSH1 Noiseless')
     plt.plot(theta_vec, CHSH2, 'o-', label='CHSH2 Noiseless')
 
-    st.set_option('deprecation.showPyplotGlobalUse', False)
     st.pyplot()
 
-if st.button("Run simulation"):
-    run()
+st.set_option('deprecation.showPyplotGlobalUse', False)
+st.write("# This is showcase of CHSH")
+sim, real = st.columns(2)
+with sim:
+    if st.button("Run simulation"):
+        run_simulation()
+with real:
+    if st.button("Run on real quantum computer"):
+        run_real()
 
